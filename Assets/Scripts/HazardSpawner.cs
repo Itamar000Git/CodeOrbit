@@ -22,7 +22,7 @@ public class HazardSpawner : MonoBehaviour
         // מגרילים מיקום בציר ה-X
         float randomX = Random.Range(minX, maxX);
         Vector2 spawnPos = new Vector2(randomX, transform.position.y);
-        
+
         // יוצרים את האסטרואיד
         Instantiate(hazardPrefab, spawnPos, hazardPrefab.transform.rotation);
         // משמיעים רעש יציאה

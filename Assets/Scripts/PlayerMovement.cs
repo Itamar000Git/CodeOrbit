@@ -16,7 +16,7 @@
 
 //     [Header("UI Elements (Drag from Canvas)")]
 //     public GameObject popupPanel;
-    
+
 //     // שינינו את הסוג ל-TextMeshProUGUI
 //     public TextMeshProUGUI uiTitle; 
 //     public TextMeshProUGUI uiDescription; 
@@ -104,7 +104,7 @@
 //         if (other.CompareTag("Star"))
 //         {
 //             StoryPoint story = other.GetComponent<StoryPoint>();
-            
+
 //             if (story != null)
 //             {
 //                 uiTitle.text = story.title;
@@ -134,20 +134,20 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 8f;
     private Vector2 targetPosition;
     private bool isMoving = false;
-    private Collider2D playerCollider; 
+    private Collider2D playerCollider;
     private SpriteRenderer spriteRenderer; // כדי שנוכל להעלים את החללית ויזואלית
 
     private Vector2 currentDirection = Vector2.zero;
     private Vector2 nextDirection = Vector2.zero;
     private Vector2 startPosition;
-    
+
     // משתנה שמונע מהשחקן לזוז בזמן שהוא מחכה לחזור לחיים
-    private bool isRespawning = false; 
+    private bool isRespawning = false;
 
     [Header("UI Elements (Drag from Canvas)")]
     public GameObject popupPanel;
-    public TextMeshProUGUI uiTitle; 
-    public TextMeshProUGUI uiDescription; 
+    public TextMeshProUGUI uiTitle;
+    public TextMeshProUGUI uiDescription;
     private GameObject lastVisitedStar = null;
 
     [Header("Audio & Effects")]
@@ -159,7 +159,7 @@ public class PlayerMovement : MonoBehaviour
     {
         startPosition = transform.position;
         targetPosition = transform.position;
-        
+
         playerCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>(); // שואב את רכיב התמונה של החללית
         audioSource = gameObject.AddComponent<AudioSource>();
@@ -199,51 +199,51 @@ public class PlayerMovement : MonoBehaviour
     // }
 
     void Update()
-{
-    // 1. אם הפאנל פתוח (הזמן עומד)
-    if (Time.timeScale == 0f)
     {
-        // אנחנו מאזינים למקש רווח, ואם הוא נלחץ - סוגרים את הפאנל
-        if (Input.GetKeyDown(KeyCode.Space))
+        // 1. אם הפאנל פתוח (הזמן עומד)
+        if (Time.timeScale == 0f)
         {
-            ClosePopup();
-        }
-        
-        // עוצרים כאן כדי שהחללית לא תנסה לטוס בזמן שהפאנל פתוח
-        return; 
-    }
-
-    // 2. אם אנחנו בתהליך של התרסקות וחזרה לחיים - אל תאפשר תנועה
-    if (isRespawning) return;
-
-    // --- מכאן והלאה זה קוד התנועה הרגיל ---
-    HandleInput();
-
-    if (!isMoving)
-    {
-        if (nextDirection != Vector2.zero)
-        {
-            if (CanMove(nextDirection))
+            // אנחנו מאזינים למקש רווח, ואם הוא נלחץ - סוגרים את הפאנל
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                currentDirection = nextDirection;
-                MoveTo(currentDirection);
+                ClosePopup();
             }
-            else if (currentDirection != Vector2.zero && CanMove(currentDirection))
-            {
-                MoveTo(currentDirection);
-            }
-        }
-    }
-    else
-    {
-        transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
-        if ((Vector2)transform.position == targetPosition)
+            // עוצרים כאן כדי שהחללית לא תנסה לטוס בזמן שהפאנל פתוח
+            return;
+        }
+
+        // 2. אם אנחנו בתהליך של התרסקות וחזרה לחיים - אל תאפשר תנועה
+        if (isRespawning) return;
+
+        // --- מכאן והלאה זה קוד התנועה הרגיל ---
+        HandleInput();
+
+        if (!isMoving)
         {
-            isMoving = false;
+            if (nextDirection != Vector2.zero)
+            {
+                if (CanMove(nextDirection))
+                {
+                    currentDirection = nextDirection;
+                    MoveTo(currentDirection);
+                }
+                else if (currentDirection != Vector2.zero && CanMove(currentDirection))
+                {
+                    MoveTo(currentDirection);
+                }
+            }
+        }
+        else
+        {
+            transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+
+            if ((Vector2)transform.position == targetPosition)
+            {
+                isMoving = false;
+            }
         }
     }
-}
 
     private void HandleInput()
     {
@@ -273,15 +273,15 @@ public class PlayerMovement : MonoBehaviour
         Vector2 destination = origin + direction;
 
         RaycastHit2D[] hits = Physics2D.LinecastAll(origin, destination);
-        
+
         foreach (RaycastHit2D hit in hits)
         {
             if (hit.collider != playerCollider && !hit.collider.isTrigger)
             {
-                return false; 
+                return false;
             }
         }
-        return true; 
+        return true;
     }
 
     private void MoveTo(Vector2 direction)
@@ -298,7 +298,7 @@ public class PlayerMovement : MonoBehaviour
             lastVisitedStar = other.gameObject;
 
             StoryPoint story = other.GetComponent<StoryPoint>();
-            
+
             if (story != null)
             {
                 uiTitle.text = story.title;
@@ -306,14 +306,14 @@ public class PlayerMovement : MonoBehaviour
             }
 
             popupPanel.SetActive(true);
-            Time.timeScale = 0f; 
+            Time.timeScale = 0f;
         }
         // אם פגענו באסטרואיד ואנחנו לא כבר בתהליך חזרה לחיים
         else if (other.CompareTag("Hazard") && !isRespawning)
         {
             // משמידים את האסטרואיד שפגע בנו
             Destroy(other.gameObject);
-            
+
             // מתחילים את תהליך ההשהיה והפיצוץ
             StartCoroutine(RespawnSequence());
         }
@@ -337,7 +337,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator RespawnSequence()
     {
         isRespawning = true; // חוסם את ה-Update מלקבל פקודות תנועה
-        
+
         // עוצרים את התנועה הנוכחית
         isMoving = false;
         nextDirection = Vector2.zero;
